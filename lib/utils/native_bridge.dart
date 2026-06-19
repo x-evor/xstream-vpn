@@ -1006,22 +1006,32 @@ class NativeBridge {
       );
       sourceJson['inbounds'] = jsonDecode(newInboundsStr);
 
-      sourceJson['dns'] = VpnConfig.buildSecureDnsConfig();
-      sourceJson['routing'] = VpnConfig.buildSecureDnsRoutingConfig(
-        sourceJson['routing'],
-        enableTunnelMode: isTunMode,
-      );
-
       final outbounds = sourceJson['outbounds'] as List<dynamic>?;
+      bool proxySupportsUdp443 = false;
       if (outbounds != null) {
         for (int i = 0; i < outbounds.length; i++) {
           final outbound = outbounds[i];
           if (outbound is Map<String, dynamic> && outbound['tag'] == 'proxy') {
+            final streamSettings = outbound['streamSettings'] as Map?;
+            if (streamSettings != null && streamSettings['network'] == 'tcp' && streamSettings['security'] == 'tls') {
+              proxySupportsUdp443 = true;
+            }
             outbounds[i] = VpnConfig.normalizeProxyOutboundFlow(outbound);
             break;
           }
         }
       }
+
+      final effectiveBlockQuic = !GlobalState.http3Passthrough.value || !proxySupportsUdp443;
+
+      sourceJson['dns'] = VpnConfig.buildSecureDnsConfig();
+      sourceJson['routing'] = VpnConfig.buildSecureDnsRoutingConfig(
+        sourceJson['routing'],
+        enableTunnelMode: isTunMode,
+        forceBlockQuic: effectiveBlockQuic,
+      );
+
+      // Outbounds were already processed above for proxy flow normalization
 
       final updatedJsonStr = const JsonEncoder.withIndent(
         '  ',

@@ -883,6 +883,7 @@ class VpnConfig {
   static Map<String, dynamic> buildSecureDnsRoutingConfig(
     Object? existingRouting, {
     required bool enableTunnelMode,
+    bool? forceBlockQuic,
   }) {
     final controlPlane = DnsConfig.controlPlane(
       dnsDirectPrimaryTag: _dnsDirectPrimaryTag,
@@ -893,12 +894,27 @@ class VpnConfig {
     final routing = existingRouting is Map
         ? Map<String, dynamic>.from(existingRouting)
         : <String, dynamic>{};
-    final existingRules = List<dynamic>.from(
+    final rawRules = List<dynamic>.from(
       routing['rules'] as List<dynamic>? ?? const [],
     );
+    // Remove existing injected secure rules to make it idempotent
+    final existingRules = rawRules.where((rule) {
+      if (rule is! Map) return true;
+      final type = rule['type'];
+      final outboundTag = rule['outboundTag'];
+      final inboundTag = rule['inboundTag'];
+      if (type == 'field' && outboundTag == 'block' && rule['network'] == 'udp' && rule['port'] == '443') return false;
+      if (type == 'field' && outboundTag == 'proxy' && rule['port'] == '53') return false;
+      if (type == 'field' && outboundTag == 'direct' && inboundTag is List && inboundTag.contains(_dnsDirectPrimaryTag)) return false;
+      if (type == 'field' && outboundTag == 'proxy' && inboundTag is List && inboundTag.contains(_dnsProxyPrimaryTag)) return false;
+      if (type == 'field' && outboundTag == 'direct' && rule['ip'] != null && rule['ip'] is List && (rule['ip'] as List).contains('fc00::/7')) return false;
+      if (type == 'field' && outboundTag == 'direct' && rule['domain'] != null && rule['domain'] is List && (rule['domain'] as List).contains('full:localhost')) return false;
+      return true;
+    }).toList();
+
     final secureDnsRules = controlPlane.routePolicy.buildSecureDnsRules(
       enableTunnelMode: enableTunnelMode,
-      blockQuic: !GlobalState.http3Passthrough.value,
+      blockQuic: forceBlockQuic ?? !GlobalState.http3Passthrough.value,
       tunInboundTag: _tunInboundTag,
       directResolverInboundTags: <String>[
         _dnsDirectPrimaryTag,

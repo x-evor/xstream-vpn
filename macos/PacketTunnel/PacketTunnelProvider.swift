@@ -321,7 +321,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
   private func shouldEnableIPv6(options: [String: NSObject], launchOptions: [String: NSObject]?)
     -> Bool
   {
-    let tun46Setting = (options["tun46Setting"] as? NSNumber)?.intValue ?? 2
+    let tun46Setting = (options["tun46Setting"] as? NSNumber)?.intValue ?? 0
     switch tun46Setting {
     case 0:
       return false
@@ -329,9 +329,9 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
       return true
     default:
       if launchOptions != nil {
-        return (options["defaultNicSupport6"] as? NSNumber)?.boolValue ?? true
+        return (options["defaultNicSupport6"] as? NSNumber)?.boolValue ?? false
       }
-      return true
+      return false
     }
   }
 

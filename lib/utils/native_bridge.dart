@@ -852,10 +852,10 @@ class NativeBridge {
   }) async {
     return darwin_host.TunnelProfile(
       mtu: 1500,
-      tun46Setting: 2,
-      defaultNicSupport6: true,
+      tun46Setting: 0,
+      defaultNicSupport6: false,
       dnsServers4: DnsConfig.systemTunnelDnsServers4(),
-      dnsServers6: DnsConfig.systemTunnelDnsServers6(),
+      dnsServers6: <String>[],
       ipv4Addresses: <String>['10.0.0.2'],
       ipv4SubnetMasks: <String>['255.255.255.0'],
       ipv4IncludedRoutes: <darwin_host.TunnelRouteV4>[
@@ -865,14 +865,9 @@ class NativeBridge {
         ),
       ],
       ipv4ExcludedRoutes: <darwin_host.TunnelRouteV4>[],
-      ipv6Addresses: <String>['fd00::2'],
-      ipv6NetworkPrefixLengths: <int>[120],
-      ipv6IncludedRoutes: <darwin_host.TunnelRouteV6>[
-        darwin_host.TunnelRouteV6(
-          destinationAddress: '::',
-          networkPrefixLength: 0,
-        ),
-      ],
+      ipv6Addresses: <String>[],
+      ipv6NetworkPrefixLengths: <int>[],
+      ipv6IncludedRoutes: <darwin_host.TunnelRouteV6>[],
       ipv6ExcludedRoutes: <darwin_host.TunnelRouteV6>[],
       configPath: configPath,
     );
@@ -883,10 +878,10 @@ class NativeBridge {
   }) async {
     return <String, Object?>{
       'mtu': 1500,
-      'tun46Setting': 2,
-      'defaultNicSupport6': true,
+      'tun46Setting': 0,
+      'defaultNicSupport6': false,
       'dnsServers4': DnsConfig.systemTunnelDnsServers4(),
-      'dnsServers6': DnsConfig.systemTunnelDnsServers6(),
+      'dnsServers6': <String>[],
       'ipv4Addresses': <String>['10.0.0.2'],
       'ipv4SubnetMasks': <String>['255.255.255.0'],
       'ipv4IncludedRoutes': <Map<String, String>>[
@@ -896,14 +891,9 @@ class NativeBridge {
         },
       ],
       'ipv4ExcludedRoutes': <Map<String, String>>[],
-      'ipv6Addresses': <String>['fd00::2'],
-      'ipv6NetworkPrefixLengths': <int>[120],
-      'ipv6IncludedRoutes': <Map<String, Object?>>[
-        const <String, Object?>{
-          'destinationAddress': '::',
-          'networkPrefixLength': 0,
-        },
-      ],
+      'ipv6Addresses': <String>[],
+      'ipv6NetworkPrefixLengths': <int>[],
+      'ipv6IncludedRoutes': <Map<String, Object?>>[],
       'ipv6ExcludedRoutes': <Map<String, Object?>>[],
       'configPath': configPath ?? '',
     };

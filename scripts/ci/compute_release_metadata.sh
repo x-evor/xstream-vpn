@@ -8,16 +8,16 @@ fi
 
 if [[ "${GITHUB_REF_TYPE:-}" == "tag" ]]; then
   release_tag="${GITHUB_REF_NAME}"
-  release_title="Release ${GITHUB_REF_NAME}"
-  release_notes="Automated release for ${GITHUB_REF_NAME}"
+  release_title="Stable Release ${GITHUB_REF_NAME}"
+  release_notes="Automated stable release for ${GITHUB_REF_NAME}"
 elif [[ "${GITHUB_EVENT_NAME:-}" == "workflow_dispatch" ]]; then
   release_tag="manual-${GITHUB_RUN_NUMBER:-0}"
   release_title="Manual Build ${GITHUB_RUN_NUMBER:-0}"
   release_notes="Automated manual build from ${GITHUB_SHA:-unknown}"
 elif [[ "${GITHUB_EVENT_NAME:-}" == "push" && "${GITHUB_REF_NAME:-}" == "main" ]]; then
-  release_tag="main-${GITHUB_RUN_NUMBER:-0}"
-  release_title="Main Build ${GITHUB_RUN_NUMBER:-0}"
-  release_notes="Automated main-branch release from ${GITHUB_SHA:-unknown}"
+  release_tag="main-latest"
+  release_title="Mainline Latest"
+  release_notes="Automated rolling release from main at ${GITHUB_SHA:-unknown}"
 else
   release_tag="nightly-${GITHUB_RUN_NUMBER:-0}"
   release_title="Nightly Build ${GITHUB_RUN_NUMBER:-0}"

@@ -51,6 +51,23 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneConfigurationName</key>
+					<string>Default Configuration</string>
+					<key>UISceneDelegateClassName</key>
+					<string>FlutterSceneDelegate</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
 	<key>PacketTunnelProviderBundleId</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER).PacketTunnel</string>
 	<key>NSLocalNetworkUsageDescription</key>
